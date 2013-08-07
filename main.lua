@@ -10,12 +10,15 @@ function love.load()
    end
 
    font = love.graphics.newImageFont(imgs["alpha"], " !aegmorstv0123456789")
+   love.graphics.setFont(font)
 
    width = love.graphics.getWidth()
    height = love.graphics.getHeight()
 
-   sx = 392 -- not exactly middle so that we don't rotate around ship tip
-   sy = 292
+   ship = {}
+   ship.i = imgs["ship"]
+   ship.x = 392 -- not exactly middle so that we don't rotate around ship tip
+   ship.y = 292
 
    angle = 0
    rotf = 40
@@ -63,7 +66,7 @@ end
 function love.draw()
    love.graphics.setBackgroundColor( 255, 255, 255 )
    print_scaled_graphics("start!", 1, 50, 50)
-   rotate_graphics(ship, angle, sx, sy)
+   rotate_graphics(ship.i, angle, ship.x, ship.y)
    love.graphics.setColor(255,255,255,255)
    for i,v in ipairs(shots) do
       --love.graphics.rectangle("fill", v.x, v.y, 2, 5)
@@ -111,8 +114,8 @@ end
 
 function shoot()
    local shot = {}
-   shot.x = sx
-   shot.y = sy
+   shot.x = ship.x
+   shot.y = ship.y
    shot.a = angle
    table.insert(shots, shot)
 end
