@@ -96,29 +96,6 @@ function print_scaled_graphics(t, s, x, y)
    love.graphics.pop()
 end
 
-function rotate_graphics(g, a, gx, gy)
-   love.graphics.push()
-   love.graphics.translate(width/2, height/2)
-   love.graphics.rotate(a)
-   love.graphics.translate(-width/2, -height/2)
-   love.graphics.draw(g, gx, gy)
-   love.graphics.pop()
-end
-
-function draw_fire_laser(x1,y1,x2,y2,a)
-   love.graphics.setColor(255, 0, 0)
-   love.graphics.setLine(2, "smooth")
-   love.graphics.push()
-   love.graphics.translate(width/2, height/2)
-   love.graphics.rotate(a)
-   love.graphics.translate(-width/2, -height/2)
-   --love.graphics.line(x1,y1,x2,y2)
-   love.graphics.rectangle("fill",x1,y1,2,5)
-   love.graphics.pop()
-   love.graphics.reset()
-   --fire_laser = false
-end
-
 function shoot()
    local shot = {}
    shot.x = ship.x + ship.w/2
