@@ -1,10 +1,15 @@
 function love.load()
-   font = love.graphics.newImage("font.png")
-   font:setFilter("nearest", "nearest")
-   rfont = love.graphics.newImageFont(font, " help!.m")
-   love.graphics.setFont(rfont)
-   ship = love.graphics.newImage("ship.png")
-   ship:setFilter("nearest", "nearest")
+   img_fn = {"ship", "alpha"}
+   imgs = {}
+   for _,v in ipairs(img_fn) do
+      imgs[v] = love.graphics.newImage("assets/"..v..".png")
+   end
+
+   for _,v in ipairs(imgs) do
+      v:setFilter("nearest", "nearest")
+   end
+
+   font = love.graphics.newImageFont(imgs["alpha"], " !aegmorstv0123456789")
 
    width = love.graphics.getWidth()
    height = love.graphics.getHeight()
@@ -56,6 +61,8 @@ function love.update(dt)
 end
 
 function love.draw()
+   love.graphics.setBackgroundColor( 255, 255, 255 )
+   print_scaled_graphics("start!", 1, 50, 50)
    rotate_graphics(ship, angle, sx, sy)
    love.graphics.setColor(255,255,255,255)
    for i,v in ipairs(shots) do
