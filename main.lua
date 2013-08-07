@@ -9,8 +9,8 @@ function love.load()
       v:setFilter("nearest", "nearest")
    end
 
-   font = love.graphics.newImageFont(imgs["alpha"], " !aegmorstv0123456789")
-   love.graphics.setFont(font)
+   --font = love.graphics.newImageFont(imgs["alpha"], " !aegmorstv0123456789")
+   --love.graphics.setFont(font)
 
    width = love.graphics.getWidth()
    height = love.graphics.getHeight()
@@ -23,8 +23,10 @@ function love.load()
    ship.h = ship.i:getHeight()
 
    shots = {}
-
    enemies = {}
+
+   score = 0
+   fired = 0
 end
 
 function love.keypressed(key, unicode)
@@ -32,6 +34,7 @@ function love.keypressed(key, unicode)
       love.event.push("quit")
    end
    if key == " " then
+      fired = fired + 1
       shoot()
    end
    if key == "e" then
@@ -73,6 +76,7 @@ function love.update(dt)
 	 if check_collision(v.x,v.y,2,5,vv.x,vv.y,15,15) then
 	    table.insert(rem_enemy, ii)
 	    table.insert(rem_shot, i)
+	    score = score + 1
 	 end
       end
    end
@@ -90,7 +94,6 @@ function love.update(dt)
 end
 
 function love.draw()
-   love.graphics.setBackgroundColor( 0, 0, 0 )
    love.graphics.draw(ship.i, ship.x, ship.y)
    
    love.graphics.setColor(255,0,0)
@@ -103,7 +106,9 @@ function love.draw()
       love.graphics.rectangle("fill", v.x, v.y, 15, 15)
    end
    
-   love.graphics.reset()
+   love.graphics.setColor(255,215,0)
+   love.graphics.printf("score: "..score.." shots: "..fired, 0,0, width, "center")
+   love.graphics.setColor(255,255,255)
 end
 
 function draw_scaled_graphics(g, s, x, y)
