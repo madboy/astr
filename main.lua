@@ -17,7 +17,7 @@ function love.load()
 
    ship = {}
    ship.i = imgs["ship"]
-   ship.x = width/2  -- not exactly middle so that we don't rotate around ship tip
+   ship.x = width/2 
    ship.y = height/2
    ship.w = ship.i:getWidth()
    ship.h = ship.i:getHeight()
@@ -72,14 +72,11 @@ end
 function love.draw()
    love.graphics.setBackgroundColor( 0, 0, 0 )
    love.graphics.draw(ship.i, ship.x, ship.y)
---   rotate_graphics(ship.i, angle, ship.x, ship.y)
    love.graphics.setColor(255,0,0)
    for i,v in ipairs(shots) do
       love.graphics.rectangle("fill", v.x, v.y, 2, 5)
-      --draw_fire_laser(v.x, v.y, v.x, v.y-10, v.a)
    end
    love.graphics.reset()
-   --if fire_laser then draw_fire_laser(400,300,400,300-30)end
 end
 
 function draw_scaled_graphics(g, s, x, y)
