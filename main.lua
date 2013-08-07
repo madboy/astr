@@ -17,11 +17,10 @@ function love.load()
 
    ship = {}
    ship.i = imgs["ship"]
-   ship.x = 392 -- not exactly middle so that we don't rotate around ship tip
-   ship.y = 292
-
-   angle = 0
-   rotf = 40
+   ship.x = width/2  -- not exactly middle so that we don't rotate around ship tip
+   ship.y = height/2
+   ship.w = ship.i:getWidth()
+   ship.h = ship.i:getHeight()
 
    shots = {}
 end
@@ -29,12 +28,6 @@ end
 function love.keypressed(key, unicode)
    if key == "escape" then
       love.event.push("quit")
-   end
-   if key == "left" then
-      angle = angle + math.pi / rotf
-   end
-   if key == "right" then
-      angle = angle - math.pi / rotf
    end
    if key == " " then
       shoot()
@@ -44,16 +37,29 @@ end
 function love.update(dt)
    local rem_shot = {}
    if love.keyboard.isDown("left") then
-      angle = angle + math.pi / rotf
+      if ship.x > 0 then
+	 ship.x = ship.x - 1
+      end
    end
    if love.keyboard.isDown("right") then
-      angle = angle - math.pi / rotf
+      if ship.x + ship.w < width then
+	 ship.x = ship.x + 1
+      end
+   end
+   if love.keyboard.isDown("up") then
+      if ship.y > 0 then
+	 ship.y = ship.y - 1
+      end
+   end
+   if love.keyboard.isDown("down") then
+      if ship.y + ship.h < height then
+	 ship.y = ship.y + 1
+      end
    end
 
    for i,v in ipairs(shots) do
       v.y = v.y - dt*100
-      --if v.y < 0 or v.y > height or v.x < 0 or v.x > width then
-      if v.y < -200 then -- since we are rotating and x is larger than y this have to be negative atm
+      if v.y < 0 then
 	 table.insert(rem_shot, i)
       end
    end
@@ -64,14 +70,15 @@ function love.update(dt)
 end
 
 function love.draw()
-   love.graphics.setBackgroundColor( 255, 255, 255 )
-   print_scaled_graphics("start!", 1, 50, 50)
-   rotate_graphics(ship.i, angle, ship.x, ship.y)
-   love.graphics.setColor(255,255,255,255)
+   love.graphics.setBackgroundColor( 0, 0, 0 )
+   love.graphics.draw(ship.i, ship.x, ship.y)
+--   rotate_graphics(ship.i, angle, ship.x, ship.y)
+   love.graphics.setColor(255,0,0)
    for i,v in ipairs(shots) do
-      --love.graphics.rectangle("fill", v.x, v.y, 2, 5)
-      draw_fire_laser(v.x, v.y, v.x, v.y-10, v.a)
+      love.graphics.rectangle("fill", v.x, v.y, 2, 5)
+      --draw_fire_laser(v.x, v.y, v.x, v.y-10, v.a)
    end
+   love.graphics.reset()
    --if fire_laser then draw_fire_laser(400,300,400,300-30)end
 end
 
@@ -114,8 +121,7 @@ end
 
 function shoot()
    local shot = {}
-   shot.x = ship.x
+   shot.x = ship.x + ship.w/2
    shot.y = ship.y
-   shot.a = angle
    table.insert(shots, shot)
 end
