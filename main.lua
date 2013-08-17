@@ -1,5 +1,5 @@
 function love.load()
-   img_fn = {"ship", "alpha"}
+   img_fn = {"ship", "monster", "background"}
    imgs = {}
    for _,v in ipairs(img_fn) do
       imgs[v] = love.graphics.newImage("assets/"..v..".png")
@@ -100,10 +100,10 @@ function love.draw()
    for _,v in ipairs(shots) do
       love.graphics.rectangle("fill", v.x, v.y, 2, 5)
    end
-   
-   love.graphics.setColor(255,120,120)
+   love.graphics.setColor(255,255,255)
+
    for _,v in ipairs(enemies) do
-      love.graphics.rectangle("fill", v.x, v.y, 15, 15)
+      love.graphics.draw(imgs["monster"], v.x, v.y)
    end
    
    love.graphics.setColor(255,215,0)
