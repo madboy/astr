@@ -1,11 +1,13 @@
+game = {}
+
 function love.load()
-   img_fn = {"ship", "monster", "background"}
+   img_fn = {"ship", "shot", "monster", "background"}
    imgs = {}
    for _,v in ipairs(img_fn) do
       imgs[v] = love.graphics.newImage("assets/"..v..".png")
    end
 
-   for _,v in ipairs(imgs) do
+   for _,v in pairs(imgs) do
       v:setFilter("nearest", "nearest")
    end
 
@@ -27,6 +29,13 @@ function love.load()
 
    score = 0
    fired = 0
+
+   game.clock = 0
+   game.enemy_size = imgs["monster"]:getWidth()
+   game.player_size = imgs["ship"]:getWidth()
+   game.shot_size = imgs["shot"]:getWidth()
+
+   debug = false
 end
 
 function love.keypressed(key, unicode)
@@ -40,40 +49,45 @@ function love.keypressed(key, unicode)
    if key == "e" then
       spawn()
    end
+   if key == "`" then
+      debug = not debug
+   end
 end
 
 function love.update(dt)
+   game.clock = game.clock + dt
    local rem_shot = {}
    local rem_enemy = {}
    if love.keyboard.isDown("left") then
       if ship.x > 0 then
-	 ship.x = ship.x - 1
+	 ship.x = ship.x - 100*dt*scale
       end
    end
    if love.keyboard.isDown("right") then
-      if ship.x + ship.w < width then
-	 ship.x = ship.x + 1
+      if ship.x + ship.w < 160*scale then
+	 ship.x = ship.x + 100*dt*scale
       end
    end
    if love.keyboard.isDown("up") then
       if ship.y > 0 then
-	 ship.y = ship.y - 1
+	 ship.y = ship.y - 100*dt*scale
       end
    end
    if love.keyboard.isDown("down") then
-      if ship.y + ship.h < height then
-	 ship.y = ship.y + 1
+      if ship.y + ship.h < 144*scale then
+	 ship.y = ship.y + 100*dt*scale
       end
    end
 
    for i,v in ipairs(shots) do
-      v.y = v.y - dt*100
+      v.y = v.y - dt*50*scale
       if v.y < 0 then
 	 table.insert(rem_shot, i)
       end
 
       for ii,vv in ipairs(enemies) do
-	 if check_collision(v.x,v.y,2,5,vv.x,vv.y,15,15) then
+--	 if check_collision(v.x,v.y,2*scale,5*scale,vv.x,vv.y, game.enemy_size*scale, game.enemy_size*scale) then
+	 if distance(v.x,v.y, vv.x, vv.y) < 10*scale then
 	    table.insert(rem_enemy, ii)
 	    table.insert(rem_shot, i)
 	    score = score + 1
@@ -89,21 +103,30 @@ function love.update(dt)
    end
 
    for i,v in ipairs(enemies) do
-      v.y = v.y + dt
+      v.y = v.y + dt*scale
    end
 end
 
 function love.draw()
-   love.graphics.draw(ship.i, ship.x, ship.y)
-   
-   love.graphics.setColor(255,0,0)
-   for _,v in ipairs(shots) do
-      love.graphics.rectangle("fill", v.x, v.y, 2, 5)
+   for i = 0,4 do
+    for j = -1,4 do
+      love.graphics.draw(imgs["background"],
+                           i*32*scale,
+                           (j+game.clock%1)*32*scale,
+                           0,scale,scale)
+    end
    end
-   love.graphics.setColor(255,255,255)
 
    for _,v in ipairs(enemies) do
-      love.graphics.draw(imgs["monster"], v.x, v.y)
+      love.graphics.draw(imgs["monster"], v.x, v.y, 0, scale, scale, game.enemy_size/2, game.enemy_size/2)
+      if debug then love.graphics.circle("line",v.x,v.y,game.enemy_size/2*scale) end
+   end
+
+   love.graphics.draw(ship.i, ship.x, ship.y, 0, scale, scale, game.player_size/2, game.player_size/2)
+
+   for _,v in ipairs(shots) do
+      love.graphics.draw(imgs["shot"], v.x, v.y, 0, scale, scale, game.shot_size/2, game.shot_size/2)
+      if debug then love.graphics.circle("line",v.x,v.y,game.shot_size/2*scale) end
    end
    
    love.graphics.setColor(255,215,0)
@@ -127,8 +150,8 @@ end
 
 function shoot()
    local shot = {}
-   shot.x = ship.x + ship.w/2
-   shot.y = ship.y
+   shot.x = ship.x - game.player_size / 2 
+   shot.y = ship.y - game.player_size * 2
    table.insert(shots, shot)
 end
 
@@ -142,4 +165,8 @@ end
 function check_collision(ax1,ay1,aw,ah, bx1,by1,bw,bh)
    local ax2,ay2,bx2,by2 = ax1 + aw, ay1 + ah, bx1 + bw, by1 + bh
    return ax1 < bx2 and ax2 > bx1 and ay1 < by2 and ay2 > by1
+end
+
+function distance(x1,y1,x2,y2)
+   return math.sqrt((x1 - x2)^2 + (y1 - y2)^2)
 end
