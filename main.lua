@@ -1,7 +1,8 @@
 game = {}
 
 function love.load()
-   img_fn = {"ship", "ship_2", "ship_3", "shot", "monster", "background"}
+   -- graphics
+   img_fn = {"ship", "ship_2", "ship_3", "ship_4", "shot", "monster", "background"}
    imgs = {}
    for _,v in ipairs(img_fn) do
       imgs[v] = love.graphics.newImage("assets/"..v..".png")
@@ -11,11 +12,12 @@ function love.load()
       v:setFilter("nearest", "nearest")
    end
 
+   -- setup
    width = love.graphics.getWidth()
    height = love.graphics.getHeight()
 
    ship = {}
-   ship.i = {imgs["ship"], imgs["ship_2"], imgs["ship_3"]}
+   ship.i = {imgs["ship"], imgs["ship_4"], imgs["ship_3"], imgs["ship_2"]}
    ship.x = width/2 
    ship.y = height/2
    ship.idx = 1
@@ -34,6 +36,10 @@ function love.load()
    game.shot_size = imgs["shot"]:getWidth()
 
    debug = false
+
+   -- sounds
+   shot_sound = love.audio.newSource("assets/shot.ogg", "static")
+   hit_sound = love.audio.newSource("assets/hit.ogg", "static")
 end
 
 function love.keypressed(key, unicode)
@@ -92,6 +98,7 @@ function love.update(dt)
 
       for ii,vv in ipairs(enemies) do
 	 if distance(v.x,v.y, vv.x, vv.y) < 10*scale then
+	    love.audio.play(hit_sound)
 	    table.insert(rem_enemy, ii)
 	    table.insert(rem_shot, i)
 	    score = score + 1
@@ -129,7 +136,7 @@ function love.draw()
    local ship_image = ship.i[ship.idx]
    love.graphics.draw(ship_image, ship.x, ship.y, 0, scale, scale, game.player_size/2, game.player_size/2)
    ship.idx = ship.idx + 1
-   if ship.idx > 3 then
+   if ship.idx > table.getn(ship.i) then
       ship.idx = 1
    end
 
@@ -159,6 +166,7 @@ end
 
 function shoot()
    local shot = {}
+   love.audio.play(shot_sound)
    shot.x = ship.x - game.player_size / 2 
    shot.y = ship.y - game.player_size * 2
    table.insert(shots, shot)
