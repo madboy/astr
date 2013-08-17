@@ -150,20 +150,6 @@ function love.draw()
    love.graphics.setColor(255,255,255)
 end
 
-function draw_scaled_graphics(g, s, x, y)
-   love.graphics.push()
-   love.graphics.scale(s,s)
-   love.graphics.draw(g, x, y)
-   love.graphics.pop()
-end
-
-function print_scaled_graphics(t, s, x, y)
-   love.graphics.push()
-   love.graphics.scale(s,s)
-   love.graphics.print(t, x, y)
-   love.graphics.pop()
-end
-
 function shoot()
    local shot = {}
    love.audio.play(shot_sound)
@@ -177,11 +163,6 @@ function spawn()
    enemy.x = math.random(0, width)
    enemy.y = math.random(0, height/2)
    table.insert(enemies, enemy)
-end
-
-function check_collision(ax1,ay1,aw,ah, bx1,by1,bw,bh)
-   local ax2,ay2,bx2,by2 = ax1 + aw, ay1 + ah, bx1 + bw, by1 + bh
-   return ax1 < bx2 and ax2 > bx1 and ay1 < by2 and ay2 > by1
 end
 
 function distance(x1,y1,x2,y2)
