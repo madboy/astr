@@ -1,6 +1,6 @@
 function love.load()
    -- graphics
-   img_fn = {"ship", "ship_2", "ship_3", "ship_4", "shot", "monster", "background", "logo", "explosion_v2_7"}
+   img_fn = {"ship", "ship_2", "ship_3", "ship_4", "shot", "monster", "background", "logo", "expl_7"}
    imgs = {}
    for _,v in ipairs(img_fn) do
       imgs[v] = love.graphics.newImage("assets/"..v..".png")
@@ -22,6 +22,7 @@ function love.load()
 
    shots = {}
    enemies = {}
+   explosions = {}
 
    score = 0
    fired = 0
@@ -34,6 +35,7 @@ function love.load()
    game.player_size = imgs["ship"]:getWidth()
    game.shot_size = imgs["shot"]:getWidth()
    game.logo_size = imgs["logo"]:getWidth()
+   game.explosion_size = imgs["expl_7"]:getWidth()
 
    debug = false
 
@@ -112,6 +114,8 @@ function love.update(dt)
 	       love.audio.play(hit_sound)
 	       table.insert(rem_enemy, ii)
 	       table.insert(rem_shot, i)
+	       vv.es = 1
+	       table.insert(explosions, i, vv)
 	       score = score + 1
 	    end
 	 end
@@ -146,6 +150,14 @@ function love.draw()
       for _,v in ipairs(enemies) do
 	 love.graphics.draw(imgs["monster"], v.x, v.y, 0, scale, scale, game.enemy_size/2, game.enemy_size/2)
 	 if debug then love.graphics.circle("line",v.x,v.y,game.enemy_size/2*scale) end
+      end
+      
+      for i,v in ipairs(explosions) do
+	 love.graphics.draw(imgs["expl_7"], v.x, v.y, 0, scale, scale, game.explosion_size/2, game.explosion_size/2)
+	 v.es = v.es + 1
+	 if v.es > 1 then
+	    table.remove(explosions, i)
+	 end
       end
 
       local ship_image = ship.i[ship.idx]
