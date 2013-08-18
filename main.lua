@@ -32,7 +32,8 @@ function love.load()
    game = {}
    game.clock = 0
    game.enemy_dt = 0
-   game.enemy_rate = 2
+   game.enemy_rate = 1.8
+   game.lives = 3
    game.enemy_size = imgs["monster"]:getWidth()
    game.player_size = imgs["ship"]:getWidth()
    game.shot_size = imgs["shot"]:getWidth()
@@ -48,7 +49,7 @@ function love.load()
    state = "logo"
 
    -- font
-   font = love.graphics.newImageFont("assets/font.png", " :0123456789cehilnoprstuv")
+   font = love.graphics.newImageFont("assets/font.png", " :0123456789cehilnoprstuva")
    love.graphics.setFont(font)
 end
 
@@ -83,6 +84,10 @@ function love.update(dt)
    if state == "logo" then
       return
    elseif state == "game" then
+      if game.lives == 0 then
+	 state = "gameover"
+	 return
+      end
       game.clock = game.clock + dt
       game.enemy_dt = game.enemy_dt + dt
 
@@ -131,6 +136,31 @@ function love.update(dt)
 	       e.y = vv.y
 	       table.insert(explosions, e)
 	       score = score + 1
+	       if game.enemy_rate > 1 then
+		  game.enemy_rate = game.enemy_rate - 0.1
+	       end
+	    end
+	 end
+      end
+
+      for i,v in ipairs(enemies) do
+	 v.y = v.y + 30*dt*scale
+	 if distance(ship.x,ship.y,v.x,v.y) < 16*scale then
+	    game.lives = game.lives - 1
+	    table.insert(rem_enemy, i)
+	    local e = {}
+	    e.es = 1
+	    e.x = ship.x
+	    e.y = ship.y
+	    table.insert(explosions, e)
+	    ship.x = width/2 
+	    ship.y = height/2
+	 end
+	 if v.y > height then
+	    game.lives = game.lives - 1
+	    table.insert(rem_enemy, i)
+	    if game.lives == 0 then
+	       return
 	    end
 	 end
       end
@@ -142,22 +172,22 @@ function love.update(dt)
 	 table.remove(enemies, v)
       end
 
-      for i,v in ipairs(enemies) do
-	 v.y = v.y + 20*dt*scale
-	 if distance(ship.x,ship.y,v.x,v.y) < 16*scale then
-	    state = "gameover"
-	 end
-      end
+
    end
 end
 
 function love.draw()
    if state == "logo" then
       love.graphics.draw(imgs["logo"], width/2, height/2, 0, scale, scale, game.logo_size/2, game.logo_size/2)
+      love.graphics.setColor(255,215,0)
+      love.graphics.printf("press enter to start", 0,0, width, "center")
+      love.graphics.setColor(255,255,255)
    elseif state == "gameover" then
       love.graphics.draw(imgs["gameover"], width/2, height/2, 0, scale, scale, game.logo_size/2, game.logo_size/2)
+      love.graphics.setColor(255,215,0)
       love.graphics.printf("score: "..score, 0,0, width, "center")
       love.graphics.printf("press c to continue", 0,20, width, "center")
+      love.graphics.setColor(255,255,255)
    elseif state == "game" then
       for i = 0,4 do
 	 for j = -1,4 do
@@ -195,8 +225,7 @@ function love.draw()
       end
       
       love.graphics.setColor(255,215,0)
-      love.graphics.printf("score: "..score.." shots: "..fired, 0,0, width, "center")
-      --love.graphics.printf(score, 0, 0, width, "center")
+      love.graphics.printf("score: "..score.." shots: "..fired.." lives: "..game.lives, 0,0, width, "center")
       love.graphics.setColor(255,255,255)
    end
 end
