@@ -1,6 +1,6 @@
 function love.load()
    -- graphics
-   img_fn = {"ship", "ship_2", "ship_3", "ship_4", "shot", "monster", "background", "logo", "expl_7"}
+   img_fn = {"ship", "ship_2", "ship_3", "ship_4", "shot", "monster", "background", "logo", "expl", "expl_2", "expl_3", "expl_4", "expl_5", "expl_6", "expl_7"}
    imgs = {}
    for _,v in ipairs(img_fn) do
       imgs[v] = love.graphics.newImage("assets/"..v..".png")
@@ -24,6 +24,8 @@ function love.load()
    enemies = {}
    explosions = {}
 
+   expl = {}
+   expl.i = {imgs["expl"], imgs["expl_2"],imgs["expl_3"],imgs["expl_4"],imgs["expl_5"],imgs["expl_6"],imgs["expl_7"],}
    score = 0
    fired = 0
 
@@ -153,9 +155,9 @@ function love.draw()
       end
       
       for i,v in ipairs(explosions) do
-	 love.graphics.draw(imgs["expl_7"], v.x, v.y, 0, scale, scale, game.explosion_size/2, game.explosion_size/2)
+	 love.graphics.draw(expl.i[v.es], v.x, v.y, 0, scale, scale, game.explosion_size/2, game.explosion_size/2)
 	 v.es = v.es + 1
-	 if v.es > 1 then
+	 if v.es > table.getn(expl.i) then
 	    table.remove(explosions, i)
 	 end
       end
