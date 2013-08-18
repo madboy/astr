@@ -25,7 +25,7 @@ function love.load()
    explosions = {}
 
    expl = {}
-   expl.i = {imgs["expl"], imgs["expl_2"],imgs["expl_3"],imgs["expl_4"],imgs["expl_5"],imgs["expl_6"],imgs["expl_7"],}
+   expl.i = {imgs["expl"], imgs["expl_2"],imgs["expl_3"],imgs["expl_4"],imgs["expl_5"],imgs["expl_6"],imgs["expl_7"], imgs["expl_6"], imgs["expl_5"],imgs["expl_4"],imgs["expl_3"],imgs["expl_2"],imgs["expl"]}
    score = 0
    fired = 0
 
@@ -116,8 +116,11 @@ function love.update(dt)
 	       love.audio.play(hit_sound)
 	       table.insert(rem_enemy, ii)
 	       table.insert(rem_shot, i)
-	       vv.es = 1
-	       table.insert(explosions, i, vv)
+	       local e = {}
+	       e.es = 1
+	       e.x = vv.x
+	       e.y = vv.y
+	       table.insert(explosions, e)
 	       score = score + 1
 	    end
 	 end
