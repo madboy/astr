@@ -1,6 +1,6 @@
 function love.load()
    -- graphics
-   img_fn = {"ship", "ship_2", "ship_3", "ship_4", "shot", "monster", "background", "logo", "expl", "expl_2", "expl_3", "expl_4", "expl_5", "expl_6", "expl_7"}
+   img_fn = {"ship", "ship_2", "ship_3", "ship_4", "shot", "monster", "background", "logo", "expl", "expl_2", "expl_3", "expl_4", "expl_5", "expl_6", "expl_7", "gameover"}
    imgs = {}
    for _,v in ipairs(img_fn) do
       imgs[v] = love.graphics.newImage("assets/"..v..".png")
@@ -46,6 +46,10 @@ function love.load()
    hit_sound = love.audio.newSource("assets/hit.ogg", "static")
 
    state = "logo"
+
+   -- font
+   font = love.graphics.newImageFont("assets/font.png", " :0123456789cehilnoprstuv")
+   love.graphics.setFont(font)
 end
 
 function love.keypressed(key, unicode)
@@ -151,9 +155,9 @@ function love.draw()
    if state == "logo" then
       love.graphics.draw(imgs["logo"], width/2, height/2, 0, scale, scale, game.logo_size/2, game.logo_size/2)
    elseif state == "gameover" then
-      love.graphics.setColor(255,215,0)
-      love.graphics.printf("GAME OVER, press c to continue", 0,0, width, "center")
-      love.graphics.setColor(255,255,255)
+      love.graphics.draw(imgs["gameover"], width/2, height/2, 0, scale, scale, game.logo_size/2, game.logo_size/2)
+      love.graphics.printf("score: "..score, 0,0, width, "center")
+      love.graphics.printf("press c to continue", 0,20, width, "center")
    elseif state == "game" then
       for i = 0,4 do
 	 for j = -1,4 do
@@ -192,6 +196,7 @@ function love.draw()
       
       love.graphics.setColor(255,215,0)
       love.graphics.printf("score: "..score.." shots: "..fired, 0,0, width, "center")
+      --love.graphics.printf(score, 0, 0, width, "center")
       love.graphics.setColor(255,255,255)
    end
 end
