@@ -56,6 +56,11 @@ function love.keypressed(key, unicode)
       if key == "return" then
 	 state = "game"
       end
+   elseif state == "gameover" then
+      if key == "c" then
+	 state = "logo"
+	 love.load()
+      end
    elseif state == "game" then
       if key == " " then
 	 fired = fired + 1
@@ -135,6 +140,9 @@ function love.update(dt)
 
       for i,v in ipairs(enemies) do
 	 v.y = v.y + 20*dt*scale
+	 if distance(ship.x,ship.y,v.x,v.y) < 16*scale then
+	    state = "gameover"
+	 end
       end
    end
 end
@@ -142,6 +150,10 @@ end
 function love.draw()
    if state == "logo" then
       love.graphics.draw(imgs["logo"], width/2, height/2, 0, scale, scale, game.logo_size/2, game.logo_size/2)
+   elseif state == "gameover" then
+      love.graphics.setColor(255,215,0)
+      love.graphics.printf("GAME OVER, press c to continue", 0,0, width, "center")
+      love.graphics.setColor(255,255,255)
    elseif state == "game" then
       for i = 0,4 do
 	 for j = -1,4 do
@@ -167,6 +179,7 @@ function love.draw()
 
       local ship_image = ship.i[ship.idx]
       love.graphics.draw(ship_image, ship.x, ship.y, 0, scale, scale, game.player_size/2, game.player_size/2)
+      if debug then love.graphics.circle("line",ship.x,ship.y,game.player_size/2*scale) end
       ship.idx = ship.idx + 1
       if ship.idx > table.getn(ship.i) then
 	 ship.idx = 1
